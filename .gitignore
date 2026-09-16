@@ -2,13 +2,19 @@
 .godot/
 *.tmp
 
-# Assets
+# Assets (dari Drive)
 game/assets/
 !game/assets/.gitkeep
 
 # Build
 build/
 *.apk
+*.aab
 
 # OS
 .DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
