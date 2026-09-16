@@ -10,7 +10,7 @@ Workflow: Sync Assets from Drive
 - Manual: Actions - Sync - Run workflow
 - Hasil: assets.zip di Releases
 
-### 2. Build APK
+### 2. Build APK (Godot)
 Workflow: Build Game APK
 - Otomatis: Setiap push
 - Hasil: APK di Artifacts
