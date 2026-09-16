@@ -1,0 +1,65 @@
+name: Sync Assets from Drive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+env:
+  DRIVE_FOLDER_ID: 1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c
+  ASSET_PATH: game/assets
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache assets
+        id: cache-assets
+        uses: actions/cache@v4
+        with:
+          path: game/assets
+          key: drive-assets-1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c-v1
+
+      - name: Setup Python
+        if: steps.cache-assets.outputs.cache-hit != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install gdown
+        if: steps.cache-assets.outputs.cache-hit != 'true'
+        run: pip install gdown
+
+      - name: Download from Drive
+        if: steps.cache-assets.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p game/assets
+          gdown --folder 1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c -O /tmp/download
+          if [ -d "/tmp/download/1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c" ]; then
+            mv /tmp/download/1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c/* game/assets/ 2>/dev/null || true
+          fi
+          find game/assets -type f | wc -l
+
+      - name: Zip assets
+        run: |
+          cd game/assets
+          zip -r ../../assets.zip . -q
+          cd ../..
+          ls -lh assets.zip
+
+      - name: Delete old release
+        run: gh release delete assets-latest --yes --cleanup-tag 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        run: gh release create assets-latest --title 'Assets' --notes 'Auto-sync' assets.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
