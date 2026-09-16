@@ -5,10 +5,6 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
-env:
-  DRIVE_FOLDER_ID: 1ikPMUdjTIoAzl5rl3OuQuC1yHhvLar3c
-  ASSET_PATH: game/assets
-
 jobs:
   sync:
     runs-on: ubuntu-latest
