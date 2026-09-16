@@ -1,0 +1,14 @@
+# Godot
+.godot/
+*.tmp
+
+# Assets
+game/assets/
+!game/assets/.gitkeep
+
+# Build
+build/
+*.apk
+
+# OS
+.DS_Store
